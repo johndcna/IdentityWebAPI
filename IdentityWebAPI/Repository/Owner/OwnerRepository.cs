@@ -77,23 +77,26 @@ namespace CenamonWebAPI.Repository.Repositories
             }
         }
 
-        public async Task<ServiceResponse<List<OwnerDTO>>> GetOwnersAsync(CancellationToken cancellationToken)          
+        public async Task<ServiceResponse<List<OwnerDTO>>> GetOwnersAsync(CancellationToken cancellationToken)
         {
-            try 
-            {              
+            try
+            {
                 var owners = await _dataContext.Owners
-                                    .Include(c => c.Notes)
-                                    .ToListAsync(cancellationToken);
-               
+                    .Include(o => o.Notes) // Include related entities as needed
+                    .ToListAsync(cancellationToken);
+
+                var ownerDTOs = owners.Select(o => new OwnerDTO
+                {
+                    Id = o.Id,
+                    Name = o.Name
+                }).ToList();
 
                 return new ServiceResponse<List<OwnerDTO>>(HttpStatusCode.OK)
                 {
-                    Data = owners.Select(o => _mapper.Map<OwnerDTO>(o)).ToList()
-
-                 };
-
+                    Data = ownerDTOs
+                };
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 var message = $"{nameof(OwnerRepository)} - {nameof(GetOwnersAsync)} - {e.Message}";
 

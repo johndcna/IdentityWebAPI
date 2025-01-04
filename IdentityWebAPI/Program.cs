@@ -12,6 +12,17 @@ ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:3001") // Allow requests from React app
+              .AllowAnyHeader()                     // Allow all headers
+              .AllowAnyMethod();                    // Allow all HTTP methods
+    });
+});
+
+
 
 // For Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
@@ -57,7 +68,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IOwnerRepository, OwnerRepository>();
 
 var app = builder.Build();
-
+app.UseCors("AllowReactApp");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

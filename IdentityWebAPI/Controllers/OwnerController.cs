@@ -39,7 +39,7 @@ namespace IdentityWebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddOwner([FromForm] CreateOwnerDTO data)
+        public async Task<ActionResult> AddOwner([FromBody] CreateOwnerDTO data)
         {
             var result = await _ownerRepository.AddOwnerAsync(data);
 
@@ -52,8 +52,13 @@ namespace IdentityWebAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateOwner([FromForm] UpdateOwnerDTO data, Guid id)
+        public async Task<ActionResult> UpdateOwner([FromBody] UpdateOwnerDTO data, Guid id)
         {
+            if (string.IsNullOrWhiteSpace(data.Name))
+            {
+                return BadRequest("Name is required.");
+            }
+
             var result = await _ownerRepository.UpdateOwnerAsync(data, id);
 
             if (!result.IsSuccessStatusCode)

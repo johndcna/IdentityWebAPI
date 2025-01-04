@@ -3,7 +3,7 @@
     public class OwnerDTO
     {
 
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; } 
         public Guid Id { get; set; }
     }
 }
